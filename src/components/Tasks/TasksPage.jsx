@@ -13,10 +13,17 @@ const PlusIcon = () => (
 );
 
 const FILTERS = ['all', 'pending', 'completed', 'overdue'];
+const GUEST_TASKS_KEY = 'taskflow_guest_tasks';
 
-export default function TasksPage() {
+function loadGuestTasks() {
+  try { return JSON.parse(localStorage.getItem(GUEST_TASKS_KEY) || '[]'); }
+  catch { return []; }
+}
+
+export default function TasksPage({ onAuthRequired }) {
   const { user } = useAuth();
-  const [tasks, setTasks] = useState([]);
+  const [firestoreTasks, setFirestoreTasks] = useState([]);
+  const [guestTasks, setGuestTasks] = useState(() => loadGuestTasks());
   const [filter, setFilter] = useState('all');
   const [showAdd, setShowAdd] = useState(false);
   const [title, setTitle] = useState('');
@@ -26,9 +33,32 @@ export default function TasksPage() {
 
   useEffect(() => {
     if (!user) return;
-    const unsub = subscribeToTasks(user.uid, setTasks);
+    const unsub = subscribeToTasks(user.uid, setFirestoreTasks);
     return unsub;
   }, [user]);
+
+  // Persist guest tasks to localStorage
+  useEffect(() => {
+    if (!user) {
+      localStorage.setItem(GUEST_TASKS_KEY, JSON.stringify(guestTasks));
+    }
+  }, [guestTasks, user]);
+
+  const tasks = user ? firestoreTasks : guestTasks;
+
+  // Guest handlers — operate on local state instead of Firestore
+  const guestHandlers = !user ? {
+    onUpdate: (taskId, updates) => setGuestTasks(prev =>
+      prev.map(t => t.id === taskId ? { ...t, ...updates } : t)
+    ),
+    onDelete: (taskId) => setGuestTasks(prev => prev.filter(t => t.id !== taskId)),
+    onComplete: (taskId, timeSpent) => setGuestTasks(prev =>
+      prev.map(t => t.id === taskId
+        ? { ...t, completed: true, completedAt: new Date().toISOString(), timeSpentSeconds: timeSpent, timerRunning: false }
+        : t
+      )
+    ),
+  } : null;
 
   function filteredTasks() {
     const now = new Date();
@@ -40,8 +70,35 @@ export default function TasksPage() {
     }
   }
 
+  function handleAddClick() {
+    if (!user && tasks.length >= 1) {
+      onAuthRequired?.();
+      return;
+    }
+    setShowAdd(v => !v);
+  }
+
   async function handleAdd() {
     if (!title.trim()) return;
+
+    if (!user) {
+      const newTask = {
+        id: `guest-${Date.now()}`,
+        title: title.trim(),
+        deadline: deadline || null,
+        allocatedMinutes: allocatedMinutes ? parseInt(allocatedMinutes, 10) : null,
+        completed: false,
+        completedAt: null,
+        timeSpentSeconds: 0,
+        timerRunning: false,
+        createdAt: new Date().toISOString(),
+      };
+      setGuestTasks(prev => [newTask, ...prev]);
+      setTitle(''); setDeadline(''); setAllocatedMinutes('');
+      setShowAdd(false);
+      return;
+    }
+
     setAdding(true);
     try {
       await addTask(user.uid, {
@@ -67,10 +124,49 @@ export default function TasksPage() {
           <h1 className="page-title">Tasks</h1>
           <p className="page-subtitle">{tasks.length} total · {tasks.filter(t => !t.completed).length} pending</p>
         </div>
-        <button className="btn-primary" onClick={() => setShowAdd(v => !v)}>
+        <button className="btn-primary" onClick={handleAddClick}>
           <PlusIcon /> Add Task
         </button>
       </div>
+
+      {!user && tasks.length === 0 && (
+        <div style={{
+          background: 'var(--bg-card)',
+          border: '1px solid var(--border)',
+          borderRadius: 'var(--radius-md)',
+          padding: '10px 14px',
+          fontSize: '13px',
+          color: 'var(--text-secondary)',
+          marginBottom: '16px',
+        }}>
+          Try it out — add your first task below. Sign in to save more.
+        </div>
+      )}
+
+      {!user && tasks.length >= 1 && (
+        <div style={{
+          background: 'var(--bg-card)',
+          border: '1px solid var(--border)',
+          borderRadius: 'var(--radius-md)',
+          padding: '10px 14px',
+          fontSize: '13px',
+          color: 'var(--text-secondary)',
+          marginBottom: '16px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: '12px',
+        }}>
+          <span>You're on the free preview. Sign in to add unlimited tasks.</span>
+          <button
+            className="btn-primary"
+            style={{ padding: '6px 14px', fontSize: '12px', whiteSpace: 'nowrap' }}
+            onClick={() => onAuthRequired?.()}
+          >
+            Sign In / Sign Up
+          </button>
+        </div>
+      )}
 
       {showAdd && (
         <div className="tasks-add-section">
@@ -144,14 +240,14 @@ export default function TasksPage() {
         {pending.length > 0 && (
           <>
             {filter === 'all' && <div className="tasks-section-label">Pending</div>}
-            {pending.map(task => <TaskCard key={task.id} task={task} />)}
+            {pending.map(task => <TaskCard key={task.id} task={task} handlers={guestHandlers} />)}
           </>
         )}
 
         {completed.length > 0 && (
           <>
             {filter === 'all' && <div className="tasks-section-label" style={{ marginTop: '8px' }}>Completed</div>}
-            {completed.map(task => <TaskCard key={task.id} task={task} />)}
+            {completed.map(task => <TaskCard key={task.id} task={task} handlers={guestHandlers} />)}
           </>
         )}
       </div>

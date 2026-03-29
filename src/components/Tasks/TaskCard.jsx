@@ -36,36 +36,40 @@ const EditIcon = () => (
   </svg>
 );
 
-export default function TaskCard({ task }) {
+export default function TaskCard({ task, handlers }) {
   const [showExtend, setShowExtend] = useState(false);
   const [newDeadline, setNewDeadline] = useState('');
   const overdue = !task.completed && isOverdue(task.deadline);
 
   const elapsed = useStopwatch(task.timeSpentSeconds || 0, !!task.timerRunning);
 
+  const doUpdate = handlers?.onUpdate || updateTask;
+  const doDelete = handlers?.onDelete || deleteTask;
+  const doComplete = handlers?.onComplete || completeTask;
+
   async function handleCheck() {
     if (task.completed) return;
-    await completeTask(task.id, elapsed);
+    await doComplete(task.id, elapsed);
   }
 
   async function handleTimerToggle() {
     if (task.completed) return;
     if (task.timerRunning) {
-      await updateTask(task.id, { timerRunning: false, timeSpentSeconds: elapsed });
+      await doUpdate(task.id, { timerRunning: false, timeSpentSeconds: elapsed });
     } else {
-      await updateTask(task.id, { timerRunning: true });
+      await doUpdate(task.id, { timerRunning: true });
     }
   }
 
   async function handleDelete() {
     if (window.confirm('Delete this task?')) {
-      await deleteTask(task.id);
+      await doDelete(task.id);
     }
   }
 
   async function handleExtend() {
     if (!newDeadline) return;
-    await updateTask(task.id, { deadline: newDeadline });
+    await doUpdate(task.id, { deadline: newDeadline });
     setShowExtend(false);
     setNewDeadline('');
   }

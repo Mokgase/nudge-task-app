@@ -39,8 +39,10 @@ const navItems = [
   { id: 'report', label: 'Weekly Report', icon: icons.report },
 ];
 
-export default function Sidebar({ activePage, onNavigate }) {
+export default function Sidebar({ activePage, onNavigate, onSignIn }) {
   const { user, logOut } = useAuth();
+
+  const visibleNavItems = user ? navItems : navItems.filter(i => i.id === 'tasks');
 
   const initials = user?.displayName
     ? user.displayName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
@@ -55,7 +57,7 @@ export default function Sidebar({ activePage, onNavigate }) {
 
       <span className="sidebar-section-label">Menu</span>
       <nav className="sidebar-nav">
-        {navItems.map(item => (
+        {visibleNavItems.map(item => (
           <button
             key={item.id}
             className={`sidebar-nav-item${activePage === item.id ? ' active' : ''}`}
@@ -68,20 +70,26 @@ export default function Sidebar({ activePage, onNavigate }) {
       </nav>
 
       <div className="sidebar-bottom">
-        <div className="sidebar-user">
-          <div className="sidebar-avatar">
-            {user?.photoURL
-              ? <img src={user.photoURL} alt="avatar" referrerPolicy="no-referrer" />
-              : initials}
+        {user ? (
+          <div className="sidebar-user">
+            <div className="sidebar-avatar">
+              {user.photoURL
+                ? <img src={user.photoURL} alt="avatar" referrerPolicy="no-referrer" />
+                : initials}
+            </div>
+            <div className="sidebar-user-info">
+              <div className="sidebar-user-name">{user.displayName || 'User'}</div>
+              <div className="sidebar-user-email">{user.email}</div>
+            </div>
+            <button className="sidebar-logout-btn" onClick={logOut} title="Sign out">
+              {icons.logout}
+            </button>
           </div>
-          <div className="sidebar-user-info">
-            <div className="sidebar-user-name">{user?.displayName || 'User'}</div>
-            <div className="sidebar-user-email">{user?.email}</div>
-          </div>
-          <button className="sidebar-logout-btn" onClick={logOut} title="Sign out">
-            {icons.logout}
+        ) : (
+          <button className="btn-primary" onClick={onSignIn} style={{ width: '100%', justifyContent: 'center' }}>
+            Sign In / Sign Up
           </button>
-        </div>
+        )}
       </div>
     </aside>
   );
