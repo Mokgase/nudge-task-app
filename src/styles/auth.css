@@ -231,3 +231,15 @@
   animation: spin 0.6s linear infinite;
   display: inline-block;
 }
+
+@media (max-width: 640px) {
+  .auth-card {
+    padding: 28px 24px;
+    border-radius: var(--radius-lg);
+  }
+
+  /* Prevent iOS input zoom */
+  .auth-input {
+    font-size: 16px;
+  }
+}

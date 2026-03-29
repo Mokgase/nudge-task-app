@@ -307,3 +307,17 @@
   font-size: 12px;
   padding: 20px;
 }
+
+@media (max-width: 640px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .stat-value {
+    font-size: 22px;
+  }
+
+  .stat-card {
+    padding: 14px 16px;
+  }
+}

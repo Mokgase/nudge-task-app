@@ -30,7 +30,13 @@ const icons = {
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
       <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
     </svg>
-  )
+  ),
+  user: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+      <circle cx="12" cy="7" r="4"/>
+    </svg>
+  ),
 };
 
 const navItems = [
@@ -49,48 +55,78 @@ export default function Sidebar({ activePage, onNavigate, onSignIn }) {
     : (user?.email?.[0] || 'U').toUpperCase();
 
   return (
-    <aside className="sidebar">
-      <div className="sidebar-logo">
-        <div className="sidebar-logo-icon">{icons.logo}</div>
-        <span className="sidebar-logo-text">TaskFlow</span>
-      </div>
+    <>
+      <aside className="sidebar">
+        <div className="sidebar-logo">
+          <div className="sidebar-logo-icon">{icons.logo}</div>
+          <span className="sidebar-logo-text">TaskFlow</span>
+        </div>
 
-      <span className="sidebar-section-label">Menu</span>
-      <nav className="sidebar-nav">
+        <span className="sidebar-section-label">Menu</span>
+        <nav className="sidebar-nav">
+          {visibleNavItems.map(item => (
+            <button
+              key={item.id}
+              className={`sidebar-nav-item${activePage === item.id ? ' active' : ''}`}
+              onClick={() => onNavigate(item.id)}
+            >
+              {item.icon}
+              {item.label}
+            </button>
+          ))}
+        </nav>
+
+        <div className="sidebar-bottom">
+          {user ? (
+            <div className="sidebar-user">
+              <div className="sidebar-avatar">
+                {user.photoURL
+                  ? <img src={user.photoURL} alt="avatar" referrerPolicy="no-referrer" />
+                  : initials}
+              </div>
+              <div className="sidebar-user-info">
+                <div className="sidebar-user-name">{user.displayName || 'User'}</div>
+                <div className="sidebar-user-email">{user.email}</div>
+              </div>
+              <button className="sidebar-logout-btn" onClick={logOut} title="Sign out">
+                {icons.logout}
+              </button>
+            </div>
+          ) : (
+            <button className="btn-primary" onClick={onSignIn} style={{ width: '100%', justifyContent: 'center' }}>
+              Sign In / Sign Up
+            </button>
+          )}
+        </div>
+      </aside>
+
+      <nav className="mobile-nav">
         {visibleNavItems.map(item => (
           <button
             key={item.id}
-            className={`sidebar-nav-item${activePage === item.id ? ' active' : ''}`}
+            className={`mobile-nav-item${activePage === item.id ? ' active' : ''}`}
             onClick={() => onNavigate(item.id)}
           >
             {item.icon}
-            {item.label}
+            <span>{item.id === 'report' ? 'Report' : item.label}</span>
           </button>
         ))}
-      </nav>
-
-      <div className="sidebar-bottom">
         {user ? (
-          <div className="sidebar-user">
-            <div className="sidebar-avatar">
+          <button className="mobile-nav-item" onClick={logOut} title="Sign out">
+            <div className="mobile-nav-avatar">
               {user.photoURL
                 ? <img src={user.photoURL} alt="avatar" referrerPolicy="no-referrer" />
                 : initials}
             </div>
-            <div className="sidebar-user-info">
-              <div className="sidebar-user-name">{user.displayName || 'User'}</div>
-              <div className="sidebar-user-email">{user.email}</div>
-            </div>
-            <button className="sidebar-logout-btn" onClick={logOut} title="Sign out">
-              {icons.logout}
-            </button>
-          </div>
+            <span>Sign Out</span>
+          </button>
         ) : (
-          <button className="btn-primary" onClick={onSignIn} style={{ width: '100%', justifyContent: 'center' }}>
-            Sign In / Sign Up
+          <button className="mobile-nav-item" onClick={onSignIn}>
+            {icons.user}
+            <span>Sign In</span>
           </button>
         )}
-      </div>
-    </aside>
+      </nav>
+    </>
   );
 }

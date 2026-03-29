@@ -6,15 +6,15 @@ A minimalist task tracker with habit analytics, built with **React + Vite + Fire
 
 ## Features
 
-- ✅ Add, complete, and delete tasks
-- ⏱ Per-task stopwatch tracking actual time spent
-- 📅 Deadlines with countdown display
-- ⏰ Allocated time vs actual time comparison
-- 📊 Dashboard with daily activity chart
-- 📈 Weekly progress report with score & rating
-- 🔐 Email/password + Google sign-in
-- 📧 Password reset via email
-- ☁️ All data persists in Firebase Firestore
+- Add, complete, and delete tasks
+- Per-task stopwatch tracking actual time spent
+- Deadlines with countdown display
+- Allocated time vs actual time comparison
+- Dashboard with daily activity chart
+- Weekly progress report with score & rating
+- Email/password + Google sign-in
+- Password reset via email
+- All data persists in Firebase Firestore
 
 ---
 
@@ -118,12 +118,12 @@ The score (0–100) is calculated as:
 **Ratings:**
 | Score | Rating |
 |-------|--------|
-| 90–100 | 🏆 Exceptional |
-| 75–89 | ⭐ Excellent |
-| 60–74 | ✅ Good Progress |
-| 40–59 | 📈 Improving |
-| 20–39 | ⚡ Needs Focus |
-| 0–19 | 🌱 Getting Started |
+| 90–100| Exceptional |
+| 75–89 |Excellent |
+| 60–74 |Good Progress |
+| 40–59 |Improving |
+| 20–39 |Needs Focus |
+| 0–19  |Getting Started |
 
 ---
 
