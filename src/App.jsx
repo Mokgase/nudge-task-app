@@ -10,7 +10,7 @@ import { addTask } from './firebase/tasksService';
 import './styles/global.css';
 import './styles/layout.css';
 
-const GUEST_TASKS_KEY = 'taskflow_guest_tasks';
+const GUEST_TASKS_KEY = 'nudge_guest_tasks';
 
 export default function App() {
   const { user, loading } = useAuth();

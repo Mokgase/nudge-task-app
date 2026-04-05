@@ -59,7 +59,7 @@ export default function Sidebar({ activePage, onNavigate, onSignIn }) {
       <aside className="sidebar">
         <div className="sidebar-logo">
           <div className="sidebar-logo-icon">{icons.logo}</div>
-          <span className="sidebar-logo-text">TaskFlow</span>
+          <span className="sidebar-logo-text">Nudge</span>
         </div>
 
         <span className="sidebar-section-label">Menu</span>

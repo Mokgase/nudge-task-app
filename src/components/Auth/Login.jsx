@@ -58,7 +58,7 @@ export default function Login({ onSwitch }) {
       <div className="auth-card">
         <div className="auth-logo">
           <div className="auth-logo-icon"><LogoIcon /></div>
-          <span className="auth-logo-text">TaskFlow</span>
+          <span className="auth-logo-text">Nudge</span>
         </div>
         <h1 className="auth-title">Welcome back</h1>
         <p className="auth-subtitle">Sign in to track your tasks and habits.</p>

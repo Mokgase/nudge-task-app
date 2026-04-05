@@ -37,7 +37,7 @@ export default function ResetPassword({ onSwitch }) {
       <div className="auth-card">
         <div className="auth-logo">
           <div className="auth-logo-icon"><LogoIcon /></div>
-          <span className="auth-logo-text">TaskFlow</span>
+          <span className="auth-logo-text">Nudge</span>
         </div>
         <h1 className="auth-title">Reset password</h1>
         <p className="auth-subtitle">We'll send you a link to reset your password.</p>

@@ -55,7 +55,7 @@ export default function Signup({ onSwitch }) {
       <div className="auth-card">
         <div className="auth-logo">
           <div className="auth-logo-icon"><LogoIcon /></div>
-          <span className="auth-logo-text">TaskFlow</span>
+          <span className="auth-logo-text">Nudge</span>
         </div>
         <h1 className="auth-title">Create account</h1>
         <p className="auth-subtitle">Start tracking tasks and building better habits.</p>

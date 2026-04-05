@@ -13,7 +13,7 @@ const PlusIcon = () => (
 );
 
 const FILTERS = ['all', 'pending', 'completed', 'overdue'];
-const GUEST_TASKS_KEY = 'taskflow_guest_tasks';
+const GUEST_TASKS_KEY = 'nudge_guest_tasks';
 
 function loadGuestTasks() {
   try { return JSON.parse(localStorage.getItem(GUEST_TASKS_KEY) || '[]'); }
