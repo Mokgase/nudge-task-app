@@ -1,16 +1,15 @@
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-import { getAuth, GoogleAuthProvider } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
+import { getAnalytics } from "firebase/analytics"
+import { getAuth, GoogleAuthProvider } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyA-1tzOBWpCTA9-pz3O0CYZpOsF0JVS8Mo",
-  authDomain: "taskflow-daa2d.firebaseapp.com",
-  projectId: "taskflow-daa2d",
-  storageBucket: "taskflow-daa2d.firebasestorage.app",
-  messagingSenderId: "279190399120",
-  appId: "1:279190399120:web:a0ad5ff8ae0d7210cd5015",
-  measurementId: "G-QHBT7QJTNS"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
 const app = initializeApp(firebaseConfig);
